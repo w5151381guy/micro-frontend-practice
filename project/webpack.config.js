@@ -1,16 +1,15 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
-const path = require('path');
 const { dependencies } = require('./package.json');
 
 module.exports = {
   mode: 'development',
   entry: './src/index',
   devServer: {
-    static: {
-      directory: path.join(__dirname, 'public'),
-    },
-    port: 9527,
+    port: 3000,
+  },
+  output: {
+    publicPath: 'http://localhost:3000/',
   },
   module: {
     rules: [
@@ -26,11 +25,9 @@ module.exports = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'modules',
-      filename: 'remoteEntry.js',
-      exposes: {
-        './Button': './src/Button',
-        './Input': './src/Input',
+      name: 'project',
+      remotes: {
+        modules: 'modules@http://localhost:9527/remoteEntry.js',
       },
       shared: {
         ...dependencies,
